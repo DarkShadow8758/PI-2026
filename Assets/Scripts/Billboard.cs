@@ -8,7 +8,6 @@ public class Billboard : MonoBehaviour
 
     private void LateUpdate()
     {
-        //Get the Camera position
         Vector3 cameraPosition = _mainCamera .transform.position;
 
         //We only want to rotate on Yaxis: 

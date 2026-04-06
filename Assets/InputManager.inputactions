@@ -16,9 +16,9 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "mouseLook",
+                    "name": "Attack",
                     "type": "Button",
-                    "id": "c0dd3d48-ba84-49ec-91b8-dbc66ad6eeee",
+                    "id": "61fae145-a83d-4b4d-8d6f-0d6df4eae474",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -94,12 +94,12 @@
                 },
                 {
                     "name": "",
-                    "id": "63a6c36b-e10b-4de8-981e-0643dbf1fcac",
-                    "path": "<Gamepad>/rightStick",
+                    "id": "f905aabd-224b-4581-97e0-bb24b4c07e5b",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "mouseLook",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
