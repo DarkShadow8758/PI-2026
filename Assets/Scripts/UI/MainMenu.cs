@@ -5,15 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] private string nextSceneName = "Cutscene";
     public void PlayGame()
     {
         Debug.Log("Play");
-        SceneManager.LoadScene("Level1");
+        SceneManager.LoadScene(nextSceneName);
     }
 
     public void OpenCredits()
     {
-        Debug.Log("Credits");
+        //Debug.Log("Credits");
     }
 
     public void QuitGame()
