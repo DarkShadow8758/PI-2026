@@ -21,13 +21,11 @@ public class EnemySpawner : MonoBehaviour
     float spawRange = 10;
     public List <GameObject> currentEnemy;
 
-    // Start is called before the first frame update
     void Start()
     {
         if (waveStart) SpawnWave();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if ( waveStart && currentEnemy.Count == 0)

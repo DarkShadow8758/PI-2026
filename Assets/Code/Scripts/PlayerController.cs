@@ -5,13 +5,24 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : DefaultCharacter
 {
+    [Header("Movement")]
     [SerializeField] private float spd;
+    private Vector2 move;
+    [Header("Animator")]
+    [SerializeField] Animator animator;
     [Header("Attack")]
     [SerializeField] private Transform atkPoint;
     [SerializeField] private float atkRange;
     [SerializeField] private int atkDamage = 100;
     [SerializeField] private LayerMask enemyLayers;
-    private Vector2 move;
+    
+
+    private CharacterController controller;
+
+    void Awake()
+    {
+        controller = GetComponent<CharacterController>();
+    }
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -23,6 +34,8 @@ public class PlayerController : DefaultCharacter
         //Debug.Log($"Botão pressionado! Fase: {context.phase}");
         if (context.started)
         {
+            animator.SetTrigger("Attack");
+            Debug.Log("Atacando");
             Attack();
         }
     }
@@ -34,9 +47,9 @@ public class PlayerController : DefaultCharacter
 
     public void MovePlayer()
     {
-        Vector3 movement = new Vector3(move.x, 0f, move.y);
+        Vector3 movement = new Vector3(move.x, 0f, move.y).normalized;
 
-        transform.Translate(movement * spd * Time.deltaTime, Space.World);
+        controller.Move(movement * spd * Time.deltaTime);
     }
 
     public void Attack()
