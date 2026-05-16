@@ -11,7 +11,7 @@ public class OneWayWall : MonoBehaviour
         {
             GetComponent<Collider>().isTrigger = false;
             spawner.waveStart = true;
-
+            Debug.Log("player passou");
         }
     }
 }
