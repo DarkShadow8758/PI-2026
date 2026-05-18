@@ -5,13 +5,18 @@ using UnityEngine;
 public class OneWayWall : MonoBehaviour
 {
     [SerializeField] private EnemySpawner spawner;
+    [SerializeField] private GameObject backWall;
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            GetComponent<Collider>().isTrigger = false;
+            if (backWall.GetComponent<Collider>().isTrigger == false)
+            {
+                return;
+            }
+
+            backWall.GetComponent<Collider>().isTrigger = false;
             spawner.waveStart = true;
-            Debug.Log("player passou");
         }
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : DefaultCharacter
 {
     [Header("Movement")]
-    [SerializeField] private float spd;
+    [SerializeField] public float spd;
     private Vector2 move;
     [Header("Animator")]
     [SerializeField] Animator animator;
@@ -15,6 +15,8 @@ public class PlayerController : DefaultCharacter
     [SerializeField] private float atkRange;
     [SerializeField] private int atkDamage = 100;
     [SerializeField] private LayerMask enemyLayers;
+    [Header("Health")]
+    [SerializeField] private HealthBar healthBar;
     
 
     private CharacterController controller;
@@ -35,7 +37,6 @@ public class PlayerController : DefaultCharacter
         if (context.started)
         {
             animator.SetTrigger("Attack");
-            Debug.Log("Atacando");
             Attack();
         }
     }
@@ -55,7 +56,6 @@ public class PlayerController : DefaultCharacter
     public void Attack()
     {
         
-        //Debug.Log("atacando");
         Collider[] hitEnemies = Physics.OverlapSphere(atkPoint.position, atkRange, enemyLayers);
 
         foreach (Collider enemy in hitEnemies)
@@ -63,19 +63,27 @@ public class PlayerController : DefaultCharacter
             //Debug.Log("Acertou " + enemy.name);
             var (damage, isCritical) = GetDamage(atkDamage);
             enemy.GetComponent<EnemyController>().TakeDamage(damage, isCritical);
-            if (isCritical)
-            {
-                Debug.Log("Dano crítico! " + damage);
-            }
         }
     }
 
-    private void OnDrawGizmosSelected()
-{
-    if (atkPoint != null)
+    public void TakeDamage(float damage)
     {
-        Gizmos.color = Color.red;  
-        Gizmos.DrawWireSphere(atkPoint.position, atkRange);
+        healthBar.TakeDamage(damage);
     }
-}
+
+    public void GainLife(float gain)
+    {
+        healthBar.GainLife(gain);
+    }
+
+    #region Debugs
+    private void OnDrawGizmosSelected()
+    {
+        if (atkPoint != null)
+        {
+            Gizmos.color = Color.red;  
+            Gizmos.DrawWireSphere(atkPoint.position, atkRange);
+        }
+    }
+    #endregion
 }

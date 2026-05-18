@@ -159,6 +159,7 @@ MonoBehaviour:
   enemyLayers:
     serializedVersion: 2
     m_Bits: 128
+  healthBar: {fileID: 0}
 --- !u!114 &4994939912940806072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,7 +176,6 @@ MonoBehaviour:
   stepCount: 0
   roadSection: {fileID: 2516967707051422340, guid: 36dcd6d73760b00458106668ebc17776,
     type: 3}
-  sections: []
 --- !u!114 &7268576585456289313
 MonoBehaviour:
   m_ObjectHideFlags: 0
