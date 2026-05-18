@@ -20,32 +20,66 @@ public class HealthBar : MonoBehaviour
     void Awake()
     {
         currentHealth = maxHealth;
+
         healthBarFillImage.fillAmount = 1f;
         healthBarTrailingFillImage.fillAmount = 1f;
     } 
-    void Update()
-    {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            DrainHealthBar(10f);
-            
-        }
-    }
 
-    private void DrainHealthBar(float drainValue)
+    public void GainLife(float gain)
     {
-        currentHealth -= drainValue;
+        currentHealth += gain;
+
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         float ratio = currentHealth / maxHealth;
 
         Color currentColor = Color.Lerp(lowHealthColor, fullHealthColor, ratio);
 
         healthBarColor.color = currentColor;
-        
+
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(healthBarFillImage.DOFillAmount(ratio, 0.25f)).SetEase(Ease.InOutSine);
+
+        sequence.Append(
+            healthBarFillImage.DOFillAmount(ratio, 0.25f)
+        );
+
         sequence.AppendInterval(trailDelay);
-        sequence.Append(healthBarTrailingFillImage.DOFillAmount(ratio, 0.3f)).SetEase(Ease.InOutSine);
+
+        sequence.Append(
+            healthBarTrailingFillImage.DOFillAmount(ratio, 0.3f)
+        );
 
         sequence.Play();
+    }
+
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        float ratio = currentHealth / maxHealth;
+
+        Color currentColor = Color.Lerp(lowHealthColor, fullHealthColor, ratio);
+
+        healthBarColor.color = currentColor;
+
+        Sequence sequence = DOTween.Sequence();
+
+        sequence.Append(
+            healthBarFillImage.DOFillAmount(ratio, 0.25f)
+        );
+
+        sequence.AppendInterval(trailDelay);
+
+        sequence.Append(
+            healthBarTrailingFillImage.DOFillAmount(ratio, 0.3f)
+        );
+
+        sequence.Play();
+
+        if(currentHealth <= 0)
+        {
+            Debug.Log("Player morreu");
+        }
     }
 }

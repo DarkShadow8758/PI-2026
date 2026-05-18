@@ -21,6 +21,16 @@ public class EnemyController : DefaultCharacter
     [SerializeField] private GameObject FloatingTextPrefab;
     [SerializeField] private Transform textPoint;
 
+    [Header("Attack")]
+    [SerializeField] private float damage = 10f;
+    [SerializeField] private float attackCooldown = 1f;
+
+    private bool canAttack = true;
+
+    [Header("Drop")]
+    [SerializeField] private DropManager dropManager;
+    [SerializeField] private Transform dropPoint;
+
     EnemySpawner spawner;
 
     private void Awake()
@@ -69,6 +79,45 @@ public class EnemyController : DefaultCharacter
         target = nearest;
     }
 
+    public void SetSpawner(EnemySpawner _spawner)
+    {
+       spawner = _spawner;
+    }
+
+    void ShowFloatingText(float value, Color textColor = default)
+    {
+        if (textColor == default) textColor = Color.white;
+        var go = Instantiate(FloatingTextPrefab, textPoint.position, Quaternion.identity, transform);
+        var tmp = go.GetComponent<TextMeshPro>();
+        tmp.text = value.ToString();
+        tmp.color = textColor;
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.CompareTag("Player") && canAttack)
+        { 
+            PlayerController player =
+                other.GetComponent<PlayerController>();
+
+            if(player != null)
+            {
+                StartCoroutine(
+                    DamageOverTime(player)
+                );
+            }
+        }
+    }
+    private IEnumerator DamageOverTime(PlayerController player)
+    {
+        canAttack = false;
+
+        player.TakeDamage(damage);
+
+        yield return new WaitForSeconds(attackCooldown);
+
+        canAttack = true;
+    }
+
     public void TakeDamage(float amount, bool isCritical = false)
     {
         currentHealth -= amount;
@@ -86,24 +135,16 @@ public class EnemyController : DefaultCharacter
         }
     }
 
-    void ShowFloatingText(float value, Color textColor = default)
-    {
-        if (textColor == default) textColor = Color.white; // Default to white if not specified
-        var go = Instantiate(FloatingTextPrefab, textPoint.position, Quaternion.identity, transform);
-        var tmp = go.GetComponent<TextMeshPro>();
-        tmp.text = value.ToString();
-        tmp.color = textColor;
-    }
-
     private void Death()
     {
+        if(dropManager != null)
+        {
+            dropManager.TryDrop(dropPoint.position);
+        }
         if (spawner != null) spawner.currentEnemy.Remove(this.gameObject);
         Destroy(gameObject);
     }
 
-    public void SetSpawner(EnemySpawner _spawner)
-    {
-       spawner = _spawner;
-    }
+    
 }
 
