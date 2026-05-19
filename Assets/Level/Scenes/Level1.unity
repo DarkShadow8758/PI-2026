@@ -1692,6 +1692,16 @@ PrefabInstance:
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 456502007}
+    - target: {fileID: 7268576585456289313, guid: 6c7c42ef11883824aa3dad163a9d0345,
+        type: 3}
+      propertyPath: myMaterials.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7268576585456289313, guid: 6c7c42ef11883824aa3dad163a9d0345,
+        type: 3}
+      propertyPath: myMaterials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: f730910bdfbce8c4996308a87c3c0754, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

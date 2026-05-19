@@ -44,23 +44,25 @@ public class PlayerController : DefaultCharacter
     void Update()
     {
         MovePlayer();
+        
     }
 
     public void MovePlayer()
     {
         Vector3 movement = new Vector3(move.x, 0f, move.y).normalized;
 
-        controller.Move(movement * spd * Time.deltaTime);
+        controller.Move(movement * Mathf.Clamp(spd, 1, 8) * Time.deltaTime);
     }
 
     public void Attack()
     {
         
         Collider[] hitEnemies = Physics.OverlapSphere(atkPoint.position, atkRange, enemyLayers);
+        Debug.Log("Encontrou: " + hitEnemies.Length);
 
         foreach (Collider enemy in hitEnemies)
         {
-            //Debug.Log("Acertou " + enemy.name);
+            Debug.Log("Acertou " + enemy.name);
             var (damage, isCritical) = GetDamage(atkDamage);
             enemy.GetComponent<EnemyController>().TakeDamage(damage, isCritical);
         }
@@ -77,7 +79,7 @@ public class PlayerController : DefaultCharacter
     }
 
     #region Debugs
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         if (atkPoint != null)
         {

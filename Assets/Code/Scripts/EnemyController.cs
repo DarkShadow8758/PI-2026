@@ -36,11 +36,19 @@ public class EnemyController : DefaultCharacter
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if(rb != null)
+        {
+            rb.isKinematic = true;
+        }
         if (agent == null)
         {
             Debug.LogError("HostileAI precisa de um NavMeshAgent no mesmo GameObject.");
         }
         currentHealth = maxHealth;
+        target = GameObject
+        .FindGameObjectWithTag(playerTag)
+        ?.transform;
     }
 
     private void Update()
