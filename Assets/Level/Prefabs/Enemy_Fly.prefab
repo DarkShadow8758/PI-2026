@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 1070813846806226433}
   - component: {fileID: 9190828223279154985}
   m_Layer: 7
-  m_Name: Enemy
+  m_Name: Enemy_Fly
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86,12 +86,12 @@ MonoBehaviour:
   criticalMultiplier: 2
   playerTag: Player
   chaseRange: 15
-  maxHealth: 1000
+  maxHealth: 3000
   FloatingTextPrefab: {fileID: 8743183207854552251, guid: cdf22c6dd54f91b418fb6215d21b6a58,
     type: 3}
   textPoint: {fileID: 2633597551625054160}
-  damage: 10
-  attackCooldown: 1
+  damage: 60
+  attackCooldown: 2
   dropManager: {fileID: 9190828223279154985}
   dropPoint: {fileID: 4747393464411466816}
 --- !u!195 &7813058010623353142
@@ -176,14 +176,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5518f819b3857f44985f3d9ca87ed2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overallDropChance: 20
+  overallDropChance: 100
   dropItems:
   - prefab: {fileID: 1294234720083009475, guid: 29a9b802223f8784e837470b8d7aaaac,
       type: 3}
-    dropChance: 99
+    dropChance: 90
   - prefab: {fileID: 2652315524278728850, guid: e4d9688199fc9444da8e16db1959b281,
       type: 3}
-    dropChance: 1
+    dropChance: 10
 --- !u!1 &6108945935092350537
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +269,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 86a37cf1d66f8c146abdf21fbd3b8b97, type: 2}
+  - {fileID: 2100000, guid: 0334aac766e508b4ca0e76f9f69fc531, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -290,7 +290,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -908681336, guid: 7e562139461edcb4dabbb71712e1f49a, type: 3}
+  m_Sprite: {fileID: -1061543831, guid: ce94d69c80e858d4fabed2fe88f494e2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -324,7 +324,7 @@ Animator:
   m_GameObject: {fileID: 9220461619204840956}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8dd844984f8ae304f9ee9e466a43e608, type: 2}
+  m_Controller: {fileID: 9100000, guid: 5b5ca660ce24f6d4b8c01d28be003851, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

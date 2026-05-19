@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class HealthBar : MonoBehaviour
 {
@@ -79,7 +80,7 @@ public class HealthBar : MonoBehaviour
 
         if(currentHealth <= 0)
         {
-            Debug.Log("Player morreu");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }
