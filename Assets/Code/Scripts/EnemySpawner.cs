@@ -1,76 +1,103 @@
-using System.Collections;
-using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : NetworkBehaviour
 {
-    public bool waveStart = false;
+    [Networked] public NetworkBool waveStart { get; set; }
+    
+    // Variáveis transformadas em [Networked] para sobreviverem a quedas de conexão
+    // e trocas de autoridade entre os jogadores
+    [Networked] public int currentWave { get; set; }
+    [Networked] public int enemiesAlive { get; set; }
+
     [System.Serializable]
     public class WaveContent
     {
-        [SerializeField][NonReorderable] GameObject[] enemySpawn;
+        [SerializeField][NonReorderable] NetworkPrefabRef[] enemySpawn;
 
-        public GameObject[] GetEnemySpawnList()
+        public NetworkPrefabRef[] GetEnemySpawnList()
         {
             return enemySpawn;
         }
     }
 
-    [SerializeField] WaveContent[] waves;
-    int currentWave = 0;
-    float spawRange = 10;
-    public List <GameObject> currentEnemy;
+    [SerializeField] private WaveContent[] waves;
+    [SerializeField] private float spawnRange = 10f; // Corrigido o typo
 
-    void Start()
+    public override void FixedUpdateNetwork()
     {
-        if (waveStart) SpawnWave();
-    }
+        if (!HasStateAuthority) return;
 
-    void Update()
-    {
-        if ( waveStart && currentEnemy.Count == 0)
+        // Se o spawner foi ativado e não há inimigos vivos, 
+        // ele avança para a próxima onda automaticamente.
+        // Isso resolve a onda 0 e todas as subsequentes de forma limpa.
+        if (waveStart && enemiesAlive == 0)
         {
-            currentWave++;
             if (currentWave < waves.Length)
             {
                 SpawnWave();
+                currentWave++;
             }
             else
             {
-                Destroy(gameObject);
+                // Todas as ondas terminaram
+                Runner.Despawn(Object);
             }
         }
     }
 
-    void SpawnWave()
+    private void SpawnWave()
     {
-        for(int i = 0; i < waves[currentWave].GetEnemySpawnList().Length; i++)
+        NetworkPrefabRef[] currentWavePrefabs = waves[currentWave].GetEnemySpawnList();
+        
+        for (int i = 0; i < currentWavePrefabs.Length; i++)
         {
-            GameObject newSpawn = Instantiate(waves[currentWave].GetEnemySpawnList()[i], FindSpawnLoc(), Quaternion.identity);
-            currentEnemy.Add(newSpawn);
+            NetworkObject newSpawn = Runner.Spawn(
+                currentWavePrefabs[i], 
+                FindSpawnLoc(), 
+                Quaternion.identity
+            );
 
             EnemyController enemy = newSpawn.GetComponent<EnemyController>();
-            enemy.SetSpawner(this);
+            
+            if (enemy != null)
+            {
+                enemy.SetSpawner(this);
+                enemiesAlive++; // Incrementa a contagem de forma sincronizada na rede
+            }
         }
+        
+        Debug.Log($"Onda {currentWave} iniciada. Inimigos: {enemiesAlive}");
     }
 
-    Vector3 FindSpawnLoc()
+    // RPC para garantir que qualquer jogador que mate o inimigo consiga avisar
+    // a Autoridade do Spawner para diminuir a contagem.
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void Rpc_ReportEnemyDeath()
     {
-        Vector3 SpawnPos;
+        enemiesAlive--;
+        
+        // Trava de segurança extra
+        if (enemiesAlive < 0) enemiesAlive = 0; 
+    }
 
-        float xLoc = Random.Range(-spawRange, spawRange) + transform.position.x;
-        float yLoc = transform.position.y;
-        float zLoc = Random.Range(-spawRange, spawRange) + transform.position.z;
-
-        SpawnPos = new Vector3(xLoc, yLoc, zLoc);
-
-        if (Physics.Raycast(SpawnPos, Vector3.down, 5))
+    private Vector3 FindSpawnLoc()
+    {
+        for (int i = 0; i < 20; i++)
         {
-            return SpawnPos;
+            float xLoc = Random.Range(-spawnRange, spawnRange) + transform.position.x;
+            float zLoc = Random.Range(-spawnRange, spawnRange) + transform.position.z;
+
+            Vector3 randomPos = new Vector3(xLoc, transform.position.y, zLoc);
+            NavMeshHit hit;
+
+            if (NavMesh.SamplePosition(randomPos, out hit, 5f, NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
         }
-        else
-        {
-            return FindSpawnLoc();
-        }
+
+        return transform.position; // Fallback caso não ache posição
     }
 }

@@ -1,48 +1,37 @@
-using System.Collections;
+using Fusion;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SectionTrigger : MonoBehaviour
+public class SectionTrigger : NetworkBehaviour
 {
     public float moveStep;
     public float stepCount = 0;
     public GameObject roadSection;
-    private List<GameObject> sections = new();
-
-    private bool spawned = false;
-
-   
+    private List<NetworkObject> sections = new();
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Trigger"))// || spawned)
+        if (!HasStateAuthority)
             return;
 
-        //spawned = true;
+        if (!other.CompareTag("Trigger"))
+            return;
 
         stepCount++;
 
-        Vector3 spawnPos = new Vector3(
-            0,
-            0,
-            moveStep * stepCount
-        );
+        Vector3 spawnPos = new Vector3(0, 0, moveStep * stepCount);
 
-        GameObject newSection = Instantiate(
-            roadSection,
-            spawnPos,
-            Quaternion.identity
-        );
+        NetworkObject newSection = Runner.Spawn(roadSection, spawnPos, Quaternion.identity);
 
         sections.Add(newSection);
 
         if (sections.Count > 4)
         {
-            GameObject oldest = sections[0];
+            NetworkObject oldest = sections[0];
 
             sections.RemoveAt(0);
 
-            Destroy(oldest);
+            Runner.Despawn(oldest);
         }
         other.enabled = false;
     }
@@ -51,7 +40,7 @@ public class SectionTrigger : MonoBehaviour
     {
         if(other.CompareTag("Trigger"))
         {
-            //spawned = false;
+            
         }
     }
 }

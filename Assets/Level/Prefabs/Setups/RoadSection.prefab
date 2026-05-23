@@ -288,6 +288,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1142374466281649159}
+  - component: {fileID: 1509476590512443235}
   m_Layer: 0
   m_Name: RoadSection
   m_TagString: Untagged
@@ -315,6 +316,26 @@ Transform:
   - {fileID: 3944458222361529896}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1509476590512443235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2516967707051422340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 1438655521
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 313028339923520690}
+  - {fileID: 1569111944080300953}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &2529154382686328147
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,18 +381,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255451b3be5f530419c224115d6cce5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveStart: 0
+  _waveStart:
+    _value: 0
   waves:
   - enemySpawn:
-    - {fileID: 1229324673624691237, guid: ca986ffc64473a64f8dc0b093677c54e, type: 3}
+    - RawGuidValue: ca986ffc64473a64f8dc0b093677c54e
   - enemySpawn:
-    - {fileID: 1229324673624691237, guid: 3a37aa1bf7af634429db9e14f2381caf, type: 3}
-    - {fileID: 1229324673624691237, guid: ca986ffc64473a64f8dc0b093677c54e, type: 3}
-    - {fileID: 1229324673624691237, guid: ca986ffc64473a64f8dc0b093677c54e, type: 3}
+    - RawGuidValue: 3a37aa1bf7af634429db9e14f2381caf
+    - RawGuidValue: ca986ffc64473a64f8dc0b093677c54e
+    - RawGuidValue: ca986ffc64473a64f8dc0b093677c54e
   - enemySpawn:
-    - {fileID: 1229324673624691237, guid: 3a37aa1bf7af634429db9e14f2381caf, type: 3}
-    - {fileID: 1229324673624691237, guid: 3a37aa1bf7af634429db9e14f2381caf, type: 3}
-    - {fileID: 1229324673624691237, guid: 3a37aa1bf7af634429db9e14f2381caf, type: 3}
+    - RawGuidValue: 3a37aa1bf7af634429db9e14f2381caf
+    - RawGuidValue: 3a37aa1bf7af634429db9e14f2381caf
+    - RawGuidValue: 3a37aa1bf7af634429db9e14f2381caf
   currentEnemy: []
 --- !u!65 &8111216075247112670
 BoxCollider:
@@ -495,7 +517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawner: {fileID: 1569111944080300953}
-  backWall: {fileID: 1182679107109217507}
+  backWall: {fileID: 6376892787828753316}
 --- !u!1 &6504227469764456970
 GameObject:
   m_ObjectHideFlags: 0
