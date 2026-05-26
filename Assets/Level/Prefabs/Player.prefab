@@ -155,9 +155,9 @@ MonoBehaviour:
   criticalMultiplier: 2
   maxHealth: 100
   _CurrentHealth: 0
-  spd: 4
+  _spd: 4
   animator: {fileID: 3147146621833960169}
-  networkAnimator: {fileID: 0}
+  networkAnimator: {fileID: 9119981866037542670}
   atkPoint: {fileID: 2398633015515101792}
   atkRange: 1
   atkDamage: 150

@@ -1923,12 +1923,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: RoadSection
       objectReference: {fileID: 0}
-    - target: {fileID: 3929330340720923054, guid: 36dcd6d73760b00458106668ebc17776,
-        type: 3}
-      propertyPath: m_NavMeshData
-      value: 
-      objectReference: {fileID: 23800000, guid: a41b9b1c43c68da41bdd7c81b96628f8,
-        type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

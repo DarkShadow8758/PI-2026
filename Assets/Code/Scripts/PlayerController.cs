@@ -31,9 +31,9 @@ public class PlayerController : DefaultCharacter
     {
         get
         {
-            if (Runner == null) return false;
+            if (Object == null || !Object.IsValid) return false;
 
-            return Object.InputAuthority == Runner.LocalPlayer;
+            return Object.HasStateAuthority;
         }
     }
 
@@ -135,24 +135,32 @@ public class PlayerController : DefaultCharacter
                 }
             }
 
-            if (IsLocalPlayer && mainCamera != null)
+            if (mainCamera == null)
+            {
+                mainCamera = FindObjectOfType<CameraFollow>();
+                
+                if (mainCamera != null)
+                {
+                    mainCamera.SetTarget(transform);
+                    Debug.Log($"[{gameObject.name}] SUCESSO! Câmera local encontrada e vinculada ao jogador.");
+                }
+                else
+                {
+                    Debug.LogWarning($"[{gameObject.name}] SOCORRO! Nenhuma CameraFollow encontrada na cena do PC!");
+                }
+            }
+
+            if (mainCamera != null)
             {
                 mainCamera.UpdateCameraNetwork();
             }
         }
+        
     }
 
     private void MovePlayer()
     {
         Vector3 movement = new Vector3(move.x, 0f, move.y).normalized;
-        if (movement.sqrMagnitude > 0.01f)
-        {
-            movement = movement.normalized;
-        }
-        else
-        {
-            movement = Vector3.zero;
-        }
         controller.Move(movement * Mathf.Clamp(spd, 1, 8) * Runner.DeltaTime);
     }
 
@@ -183,7 +191,7 @@ public class PlayerController : DefaultCharacter
 
         if (Runner != null && Object != null && Object.IsValid)
         {
-            PlayerRef player = Object.InputAuthority;
+            PlayerRef player = Object.StateAuthority;
             Runner.SetPlayerObject(player, null);
             Runner.Despawn(Object);
         }
