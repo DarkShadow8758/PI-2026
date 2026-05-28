@@ -57,9 +57,13 @@ public class PlayerController : DefaultCharacter
         transform.position = safePos;
         controller.enabled = true;
 
-        if (HasStateAuthority)
+        /*if (HasStateAuthority)
         {
             GameManager.Instance.Rpc_RegisterPlayer();
+        }*/
+        if (HasStateAuthority) 
+        {
+            StartCoroutine(WaitAndRegister());
         }
         if (IsLocalPlayer) 
         {
@@ -87,6 +91,19 @@ public class PlayerController : DefaultCharacter
             }
         } 
         Debug.Log("Player local criado e posicionado no Y=0.5");
+    }
+    private IEnumerator WaitAndRegister()
+    {
+        // Fica em loop invisível aguardando até que o GameManager exista E esteja conectado na rede
+        yield return new WaitUntil(() => 
+            GameManager.Instance != null && 
+            GameManager.Instance.Object != null && 
+            GameManager.Instance.Object.IsValid
+        );
+
+        // Quando o jogo chegar nesta linha, o GameManager estará 100% pronto.
+        GameManager.Instance.Rpc_RegisterPlayer();
+        Debug.Log("Registro enviado ao GameManager com segurança!");
     }
 
     public void OnMove(InputAction.CallbackContext context)
