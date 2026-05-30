@@ -1853,16 +1853,6 @@ PrefabInstance:
       propertyPath: SortKey
       value: 3046353621
       objectReference: {fileID: 0}
-    - target: {fileID: 1509476590512443235, guid: 36dcd6d73760b00458106668ebc17776,
-        type: 3}
-      propertyPath: NetworkedBehaviours.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509476590512443235, guid: 36dcd6d73760b00458106668ebc17776,
-        type: 3}
-      propertyPath: NetworkedBehaviours.Array.data[1]
-      value: 
-      objectReference: {fileID: 187072223397071340}
     - target: {fileID: 2516967707051422340, guid: 36dcd6d73760b00458106668ebc17776,
         type: 3}
       propertyPath: m_Name
@@ -1873,18 +1863,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 36dcd6d73760b00458106668ebc17776, type: 3}
---- !u!114 &187072223397071340 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -449019339824359264, guid: 36dcd6d73760b00458106668ebc17776,
-    type: 3}
-  m_PrefabInstance: {fileID: 187072223397071339}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1532435091508137806
 PrefabInstance:
   m_ObjectHideFlags: 0
