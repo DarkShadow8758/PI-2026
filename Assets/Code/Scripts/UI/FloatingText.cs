@@ -10,13 +10,10 @@ public class FloatingText : MonoBehaviour
 
     void Start()
     {
-        // Pega a câmera local do jogador
         if (Camera.main != null) camTransform = Camera.main.transform;
 
-        // Destrói localmente, não afeta a rede
         Destroy(gameObject, destroyTime);
 
-        // Aplica o pulo e aleatoriedade
         transform.position += offset;
         transform.position += new Vector3(
             Random.Range(-randomizeIntensity.x, randomizeIntensity.x),
@@ -27,7 +24,6 @@ public class FloatingText : MonoBehaviour
 
     void LateUpdate()
     {
-        // Mantém o texto perfeitamente legível virado para a câmera do celular (Billboard embutido)
         if (camTransform != null)
         {
             Vector3 direction = camTransform.forward;
