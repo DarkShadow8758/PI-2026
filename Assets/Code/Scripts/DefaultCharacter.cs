@@ -32,7 +32,6 @@ public abstract class DefaultCharacter : NetworkBehaviour, IDamageCalculator
         return (finalDamage, isCritical);
     }
 
-    // RPC permite que qualquer jogador mande um aviso de dano para a Autoridade de Estado
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public virtual void Rpc_TakeDamage(float amount, bool isCritical = false)
     {
@@ -53,25 +52,19 @@ public abstract class DefaultCharacter : NetworkBehaviour, IDamageCalculator
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, maxHealth);
     }
 
-    
-
-    // Chamado pelo Fusion em todos os clientes
     private void OnHealthChanged()
     {
-        // Se a vida atual for menor que a antiga, tomou dano
         if (CurrentHealth < previousHealth)
         {
             float damageTaken = previousHealth - CurrentHealth;
             ShowDamageVisuals(damageTaken);
         }
 
-        // Atualiza a memória
         previousHealth = CurrentHealth;
     }
 
     protected virtual void ShowDamageVisuals(float damageAmount)
     {
-        // Deixe vazio aqui, o EnemyController vai sobrescrever isso
     }
     protected abstract void Death();
 }

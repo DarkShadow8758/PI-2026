@@ -72,11 +72,11 @@ public class PlayerController : DefaultCharacter
             if (mainCamera != null) 
             {
                 mainCamera.SetTarget(transform);
-                Debug.Log("CÂMERA SEQUESTRADA COM SUCESSO PELO JOGADOR LOCAL!");
+                //Debug.Log("CÂMERA SEQUESTRADA COM SUCESSO PELO JOGADOR LOCAL!");
             }
             else
             {
-                Debug.LogError("Câmera não encontrada na cena!");
+                //Debug.LogError("Câmera não encontrada na cena!");
             }
             
             healthBar = FindObjectOfType<HealthBar>();
@@ -87,23 +87,21 @@ public class PlayerController : DefaultCharacter
             }
             else
             {
-                Debug.LogError("HealthBar não encontrada na cena!");
+                //Debug.LogError("HealthBar não encontrada na cena!");
             }
         } 
-        Debug.Log("Player local criado e posicionado no Y=0.5");
+        //Debug.Log("Player local criado e posicionado no Y=0.5");
     }
     private IEnumerator WaitAndRegister()
     {
-        // Fica em loop invisível aguardando até que o GameManager exista E esteja conectado na rede
         yield return new WaitUntil(() => 
             GameManager.Instance != null && 
             GameManager.Instance.Object != null && 
             GameManager.Instance.Object.IsValid
         );
 
-        // Quando o jogo chegar nesta linha, o GameManager estará 100% pronto.
         GameManager.Instance.Rpc_RegisterPlayer();
-        Debug.Log("Registro enviado ao GameManager com segurança!");
+        //Debug.Log("Registro enviado ao GameManager com segurança!");
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -118,8 +116,6 @@ public class PlayerController : DefaultCharacter
         
         if (context.started)
         {
-            // Em vez de chamar o Animator padrão, chamamos o NetworkAnimator.
-            // Ele vai rodar no seu celular e enviar o comando para o Jogador 2 ver o movimento.
             if (networkAnimator != null)
             {
                 networkAnimator.SetTrigger("Attack");
@@ -159,11 +155,11 @@ public class PlayerController : DefaultCharacter
                 if (mainCamera != null)
                 {
                     mainCamera.SetTarget(transform);
-                    Debug.Log($"[{gameObject.name}] SUCESSO! Câmera local encontrada e vinculada ao jogador.");
+                    //Debug.Log($"[{gameObject.name}] SUCESSO! Câmera local encontrada e vinculada ao jogador.");
                 }
                 else
                 {
-                    Debug.LogWarning($"[{gameObject.name}] SOCORRO! Nenhuma CameraFollow encontrada na cena do PC!");
+                    //Debug.LogWarning($"[{gameObject.name}] SOCORRO! Nenhuma CameraFollow encontrada na cena do PC!");
                 }
             }
 

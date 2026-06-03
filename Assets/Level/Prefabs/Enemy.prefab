@@ -89,11 +89,11 @@ MonoBehaviour:
   maxHealth: 1000
   _CurrentHealth: 0
   playerTag: Player
-  chaseRange: 15
+  chaseRange: 200
   FloatingTextPrefab: {fileID: 8743183207854552251, guid: cdf22c6dd54f91b418fb6215d21b6a58,
     type: 3}
   textPoint: {fileID: 2633597551625054160}
-  damage: 10
+  damage: 2
   attackCooldown: 1
   dropManager: {fileID: 9190828223279154985}
   dropPoint: {fileID: 4747393464411466816}

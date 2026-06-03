@@ -23,28 +23,24 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void SpawnPlayer(PlayerRef player)
     {
-        // Trava de segurança: evita spawn duplo caso a cena carregue duas vezes
         if (runner.GetPlayerObject(player) != null)
         {
-            Debug.Log("Jogador já possui um avatar na cena.");
+            //Debug.Log("Jogador já possui um avatar na cena.");
             return;
         }
 
-        Debug.Log("Criando player: " + player);
+        //Debug.Log("Criando player: " + player);
 
-        // Sorteia posição inicial para o Raycast
         Vector3 spawnPos = new Vector3(
             UnityEngine.Random.Range(-3f, 3f),
             20f,
             UnityEngine.Random.Range(-3f, 3f)
         );
 
-        // Raycast para achar o chão (se houver variação no terreno)
         if (Physics.Raycast(spawnPos, Vector3.down, out RaycastHit hit, 50f))
         {
             spawnPos = new Vector3(0, 0.5f, 0);
-            //spawnPos = hit.point + new Vector3(0, -1f, 0);
-            Debug.Log("Raycast foi em:" + spawnPos);
+            //Debug.Log("Raycast foi em:" + spawnPos);
         }
         else
         {
@@ -52,7 +48,6 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             Debug.Log("Raycast fakhou");
         }
 
-        // O jogador que chama runner.Spawn ganha a Autoridade de Estado
         NetworkObject playerObject = runner.Spawn(
             playerPrefab,
             spawnPos,
@@ -60,13 +55,11 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             player
         );
 
-        // Registra qual objeto pertence a qual jogador
         runner.SetPlayerObject(player, playerObject);
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        // NO SHARED/SINGLE MODE: Cada jogador é responsável por spawnar a si mesmo.
         if (player == runner.LocalPlayer)
         {
             SpawnPlayer(player);
@@ -75,20 +68,14 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnSceneLoadDone(NetworkRunner runner)
     {
-        Debug.Log("Cena carregada");
+        //Debug.Log("Cena carregada");
 
-        // TODO RESOLVIDO: Após a troca de cena, o próprio jogador verifica 
-        // se ele está sem avatar e recria o seu. Sem depender do MasterClient.
         if (runner.GetPlayerObject(runner.LocalPlayer) == null)
         {
             SpawnPlayer(runner.LocalPlayer);
         }
     }
 
-    // ==========================================
-    // CALLBACKS NÃO UTILIZADOS 
-    // (Agrupados para manter o script limpo, mas cumprindo a Interface)
-    // ==========================================
     #region Unused Callbacks
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player){}
     public void OnInput(NetworkRunner runner, NetworkInput input){}

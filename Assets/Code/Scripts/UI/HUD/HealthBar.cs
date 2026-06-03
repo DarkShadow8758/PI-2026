@@ -24,9 +24,6 @@ public class HealthBar : MonoBehaviour
     public void SetMaxHealth(float value)
     {
         maxHealth = value;
-        
-        // Atualiza as cores e o preenchimento instantaneamente na largada,
-        // evitando que a barra faça animação logo ao nascer.
         healthBarFillImage.fillAmount = 1f;
         healthBarTrailingFillImage.fillAmount = 1f;
         healthBarColor.color = fullHealthColor;
@@ -52,8 +49,6 @@ public class HealthBar : MonoBehaviour
         );
     }
 
-    // ESSENCIAL: Previne memory leak e erros de console (MissingReferenceException)
-    // quando a cena é recarregada pelo GameManager e a HealthBar é destruída.
     private void OnDestroy()
     {
         currentSequence?.Kill();
