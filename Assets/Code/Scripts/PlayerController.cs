@@ -23,7 +23,14 @@ public class PlayerController : DefaultCharacter
     [Header("Health")]
     [SerializeField] private HealthBar healthBar;
     private float lastHealth;
-    
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip attackClip;
+    [SerializeField] private AudioClip[] footstepClips; 
+    [SerializeField] private float footstepInterval = 0.3f; 
+    private float footstepTimer;
+    private Vector3 lastPos;
     private CharacterController controller;
 
     private CameraFollow mainCamera;
@@ -45,6 +52,10 @@ public class PlayerController : DefaultCharacter
         {
             networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
     }
 
     public override void Spawned()
@@ -57,10 +68,8 @@ public class PlayerController : DefaultCharacter
         transform.position = safePos;
         controller.enabled = true;
 
-        /*if (HasStateAuthority)
-        {
-            GameManager.Instance.Rpc_RegisterPlayer();
-        }*/
+        lastPos = transform.position; 
+
         if (HasStateAuthority) 
         {
             StartCoroutine(WaitAndRegister());
@@ -124,8 +133,17 @@ public class PlayerController : DefaultCharacter
             {
                 animator.SetTrigger("Attack");
             }
-            
+            Rpc_PlayAttackSound();
             Attack();
+        }
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void Rpc_PlayAttackSound()
+    {
+        if (audioSource != null && attackClip != null)
+        {
+            audioSource.PlayOneShot(attackClip); 
         }
     }
     
@@ -137,6 +155,23 @@ public class PlayerController : DefaultCharacter
 
     public override void Render()
     {
+        Vector3 velocity = (transform.position - lastPos) / Time.deltaTime;
+        lastPos = transform.position;
+
+        if (velocity.magnitude > 0.1f)
+        {
+            footstepTimer -= Time.deltaTime;
+            if (footstepTimer <= 0f)
+            {
+                PlayFootstep();
+                footstepTimer = footstepInterval;
+            }
+        }
+        else
+        {
+            footstepTimer = 0f; 
+        }
+
         if (IsLocalPlayer)
         {
             if (lastHealth != CurrentHealth)
@@ -169,6 +204,14 @@ public class PlayerController : DefaultCharacter
             }
         }
         
+    }
+    private void PlayFootstep()
+    {
+        if (audioSource != null && footstepClips.Length > 0)
+        {
+            int randomIndex = Random.Range(0, footstepClips.Length);
+            audioSource.PlayOneShot(footstepClips[randomIndex], 0.6f); 
+        }
     }
 
     private void MovePlayer()

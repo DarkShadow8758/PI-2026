@@ -6,7 +6,11 @@ using UnityEngine;
 
 public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
+    [Header("Personagens (Prefabs)")]
+    [Tooltip("O personagem que será o Host (quem cria a sala)")]
     [SerializeField] private NetworkPrefabRef playerPrefab;
+    [Tooltip("O personagem que será o Cliente (quem entra na sala)")]
+    [SerializeField] private NetworkPrefabRef player2Prefab;
     
     private NetworkRunner runner;
 
@@ -30,6 +34,17 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
 
         //Debug.Log("Criando player: " + player);
+        NetworkPrefabRef prefabToSpawn;
+        if (runner.IsSharedModeMasterClient)
+        {
+            prefabToSpawn = playerPrefab;
+            Debug.Log($"Criando Player 1 (Master): {player}");
+        }
+        else
+        {
+            prefabToSpawn = player2Prefab;
+            Debug.Log($"Criando Player 2 (Cliente): {player}");
+        }
 
         Vector3 spawnPos = new Vector3(
             UnityEngine.Random.Range(-3f, 3f),
@@ -49,7 +64,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
 
         NetworkObject playerObject = runner.Spawn(
-            playerPrefab,
+            prefabToSpawn,
             spawnPos,
             Quaternion.identity,
             player
