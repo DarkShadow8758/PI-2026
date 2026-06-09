@@ -152,11 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97de1b6ca2fb06d48b584cac679e5673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  criticalChance: 0.2
+  criticalChance: 0.35
   criticalMultiplier: 2
   maxHealth: 100
   _CurrentHealth: 0
-  _spd: 4
+  _spd: 5
   animator: {fileID: 3147146621833960169}
   networkAnimator: {fileID: 9119981866037542670}
   atkPoint: {fileID: 2398633015515101792}
