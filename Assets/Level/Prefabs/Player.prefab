@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   criticalChance: 0.2
-  criticalMultiplier: 2
-  maxHealth: 100
+  criticalMultiplier: 3
+  maxHealth: 130
   _CurrentHealth: 0
   _spd: 4
   animator: {fileID: 3147146621833960169}
