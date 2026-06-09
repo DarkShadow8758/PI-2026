@@ -1,31 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Billboard : MonoBehaviour
 {
-    [SerializeField] private Camera _mainCamera;
-
-    private void Awake()
-    {
-        _mainCamera = Camera.main;
-
-        if (_mainCamera == null)
-        {
-            Debug.LogError("Nenhuma câmera com tag MainCamera encontrada!");
-        }
-    }
+    private Transform camTransform;
 
     private void LateUpdate()
     {
-        if (_mainCamera == null) return;
-        Vector3 cameraPosition = _mainCamera .transform.position;
+        // Cacheia a câmera para economizar performance (FindObject é pesado)
+        if (camTransform == null)
+        {
+            if (Camera.main != null) camTransform = Camera.main.transform;
+            return; 
+        }
 
-        //We only want to rotate on Yaxis: 
-        cameraPosition.y = transform.position.y;
-        //Make the sprite face the camera
-        transform.LookAt(cameraPosition);
-        //Rorate 180 on Y because of Sprite Renderer works
-        transform.Rotate(0f, 180f, 0f);
+        // Pega a direção exata para onde a câmera está olhando
+        Vector3 direction = camTransform.forward;
+        
+        // Zera o eixo Y para a barra não inclinar para trás/frente
+        direction.y = 0; 
+
+        // Força a barra a ficar perfeitamente paralela à tela. Zero tremedeira.
+        transform.forward = direction;
     }
 }

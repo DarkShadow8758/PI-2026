@@ -45,6 +45,8 @@ GameObject:
   - component: {fileID: 4062296850141291222}
   - component: {fileID: 1070813846806226433}
   - component: {fileID: 9190828223279154985}
+  - component: {fileID: 5445912809175857585}
+  - component: {fileID: 967963927553320199}
   m_Layer: 7
   m_Name: Enemy_Fly
   m_TagString: Enemy
@@ -84,13 +86,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   criticalChance: 0.2
   criticalMultiplier: 2
-  playerTag: Player
-  chaseRange: 15
   maxHealth: 3000
+  _CurrentHealth: 0
+  playerTag: Player
+  chaseRange: 200
   FloatingTextPrefab: {fileID: 8743183207854552251, guid: cdf22c6dd54f91b418fb6215d21b6a58,
     type: 3}
   textPoint: {fileID: 2633597551625054160}
-  damage: 60
+  damage: 30
   attackCooldown: 2
   dropManager: {fileID: 9190828223279154985}
   dropPoint: {fileID: 4747393464411466816}
@@ -178,12 +181,49 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   overallDropChance: 100
   dropItems:
-  - prefab: {fileID: 1294234720083009475, guid: 29a9b802223f8784e837470b8d7aaaac,
-      type: 3}
+  - prefab:
+      RawGuidValue: 29a9b802223f8784e837470b8d7aaaac
     dropChance: 90
-  - prefab: {fileID: 2652315524278728850, guid: e4d9688199fc9444da8e16db1959b281,
-      type: 3}
+  - prefab:
+      RawGuidValue: e4d9688199fc9444da8e16db1959b281
     dropChance: 10
+--- !u!114 &5445912809175857585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229324673624691237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 1892145169
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 8982440101180565732}
+  - {fileID: 967963927553320199}
+  ForceRemoteRenderTimeframe: 0
+--- !u!114 &967963927553320199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229324673624691237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &6108945935092350537
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,7 +284,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.72, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7758045703272652408}
@@ -290,12 +330,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1061543831, guid: ce94d69c80e858d4fabed2fe88f494e2, type: 3}
+  m_Sprite: {fileID: -1275321177, guid: 2e8160f57c2763b4787f8cf8c73ded9e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 54.15, y: 60.01039}
+  m_Size: {x: 6.0000005, y: 6.00586}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -313,7 +353,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8452a4427acde45ae43f48f64af2c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainCamera: {fileID: 0}
 --- !u!95 &5183768440019911019
 Animator:
   serializedVersion: 5
@@ -324,7 +363,7 @@ Animator:
   m_GameObject: {fileID: 9220461619204840956}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5b5ca660ce24f6d4b8c01d28be003851, type: 2}
+  m_Controller: {fileID: 9100000, guid: 3b22d98bd3e92e24d95acd3c25966575, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

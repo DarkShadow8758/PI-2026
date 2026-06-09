@@ -1,76 +1,122 @@
-using System.Collections;
-using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : NetworkBehaviour
 {
-    public bool waveStart = false;
+    [Networked] public NetworkBool waveStart { get; set; }
+    [Networked] public int currentWave { get; set; }
+    [Networked] public int enemiesAlive { get; set; }
+    
+    // 🔴 NOVA VARIÁVEL: Controla se a área já foi pacificada
+    [Networked] public NetworkBool isCleared { get; set; }
+
     [System.Serializable]
     public class WaveContent
     {
-        [SerializeField][NonReorderable] GameObject[] enemySpawn;
+        [SerializeField][NonReorderable] NetworkPrefabRef[] enemySpawn;
 
-        public GameObject[] GetEnemySpawnList()
+        public NetworkPrefabRef[] GetEnemySpawnList()
         {
             return enemySpawn;
         }
     }
 
-    [SerializeField] WaveContent[] waves;
-    int currentWave = 0;
-    float spawRange = 10;
-    public List <GameObject> currentEnemy;
+    [SerializeField] private WaveContent[] waves;
+    [SerializeField] private float spawnRange = 10f; 
 
-    void Start()
-    {
-        if (waveStart) SpawnWave();
-    }
+    // 🔴 REFERÊNCIA DA PAREDE
+    [Header("Barreira de Progressão")]
+    [Tooltip("Coloque aqui o GameObject que bloqueia a pista (com Collider).")]
+    [SerializeField] private GameObject progressionWall; 
 
-    void Update()
+    public override void FixedUpdateNetwork()
     {
-        if ( waveStart && currentEnemy.Count == 0)
+        if (!HasStateAuthority) return;
+
+        // Só tenta spawnar se a wave começou, não tem inimigos e a área ainda não foi limpa
+        if (waveStart && enemiesAlive == 0 && !isCleared)
         {
-            currentWave++;
             if (currentWave < waves.Length)
             {
                 SpawnWave();
+                currentWave++;
             }
             else
             {
-                Destroy(gameObject);
+                // 🔴 Todas as ondas terminaram! Libera a passagem.
+                isCleared = true;
+                
+                // NOTA: Removi o Runner.Despawn(Object) daqui!
+                // Se o objeto despawnar na rede, o script para de rodar para o Jogador 2
+                // e a parede dele poderia bugar e ficar presa. Mantemos o Spawner vivo, 
+                // mas inativo, para ele segurar a parede desligada.
             }
         }
     }
 
-    void SpawnWave()
+    // 🔴 NOVO MÉTODO: Render cuida do visual e ativação em TODOS os clientes simultaneamente
+    public override void Render()
     {
-        for(int i = 0; i < waves[currentWave].GetEnemySpawnList().Length; i++)
+        if (progressionWall != null)
         {
-            GameObject newSpawn = Instantiate(waves[currentWave].GetEnemySpawnList()[i], FindSpawnLoc(), Quaternion.identity);
-            currentEnemy.Add(newSpawn);
-
-            EnemyController enemy = newSpawn.GetComponent<EnemyController>();
-            enemy.SetSpawner(this);
+            // A parede fica ativa apenas se a wave já começou E a área ainda não foi limpa.
+            // Isso permite que os jogadores andem livres antes de engatilhar o spawner, 
+            // e fiquem trancados durante a batalha.
+            bool shouldWallBeActive = waveStart && !isCleared;
+            
+            if (progressionWall.activeSelf != shouldWallBeActive)
+            {
+                progressionWall.SetActive(shouldWallBeActive);
+            }
         }
     }
 
-    Vector3 FindSpawnLoc()
+    private void SpawnWave()
     {
-        Vector3 SpawnPos;
-
-        float xLoc = Random.Range(-spawRange, spawRange) + transform.position.x;
-        float yLoc = transform.position.y;
-        float zLoc = Random.Range(-spawRange, spawRange) + transform.position.z;
-
-        SpawnPos = new Vector3(xLoc, yLoc, zLoc);
-
-        if (Physics.Raycast(SpawnPos, Vector3.down, 5))
+        NetworkPrefabRef[] currentWavePrefabs = waves[currentWave].GetEnemySpawnList();
+        
+        for (int i = 0; i < currentWavePrefabs.Length; i++)
         {
-            return SpawnPos;
+            NetworkObject newSpawn = Runner.Spawn(
+                currentWavePrefabs[i], 
+                FindSpawnLoc(), 
+                Quaternion.identity
+            );
+
+            EnemyController enemy = newSpawn.GetComponent<EnemyController>();
+            
+            if (enemy != null)
+            {
+                enemy.SetSpawner(this);
+                enemiesAlive++; 
+            }
         }
-        else
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void Rpc_ReportEnemyDeath()
+    {
+        enemiesAlive--;
+        if (enemiesAlive < 0) enemiesAlive = 0; 
+    }
+
+    private Vector3 FindSpawnLoc()
+    {
+        for (int i = 0; i < 20; i++)
         {
-            return FindSpawnLoc();
+            float xLoc = Random.Range(-spawnRange, spawnRange) + transform.position.x;
+            float zLoc = Random.Range(-spawnRange, spawnRange) + transform.position.z;
+
+            Vector3 randomPos = new Vector3(xLoc, transform.position.y, zLoc);
+            NavMeshHit hit;
+
+            if (NavMesh.SamplePosition(randomPos, out hit, 5f, NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
         }
+
+        return transform.position;
     }
 }

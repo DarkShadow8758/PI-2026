@@ -16,7 +16,11 @@ GameObject:
   - component: {fileID: 4994939912940806072}
   - component: {fileID: 7268576585456289313}
   - component: {fileID: 3684915231873290259}
-  m_Layer: 0
+  - component: {fileID: 4782392139133994658}
+  - component: {fileID: 6278881395600088950}
+  - component: {fileID: 9119981866037542670}
+  - component: {fileID: -6373016000988029028}
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -32,9 +36,9 @@ Transform:
   m_GameObject: {fileID: 1259683591320761434}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.078, y: 2.026, z: -0.55}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 9017691618988965428}
   - {fileID: 2398633015515101792}
@@ -52,7 +56,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8452a4427acde45ae43f48f64af2c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainCamera: {fileID: 0}
 --- !u!135 &4771935946208112978
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -150,9 +153,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   criticalChance: 0.2
-  criticalMultiplier: 2
-  spd: 4
+  criticalMultiplier: 3
+  maxHealth: 130
+  _CurrentHealth: 0
+  _spd: 4
   animator: {fileID: 3147146621833960169}
+  networkAnimator: {fileID: 9119981866037542670}
   atkPoint: {fileID: 2398633015515101792}
   atkRange: 1
   atkDamage: 150
@@ -160,6 +166,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   healthBar: {fileID: 0}
+  audioSource: {fileID: -6373016000988029028}
+  attackClip: {fileID: 8300000, guid: 7b777a3e10c0de242b8bb9a64cc21488, type: 3}
+  footstepClips:
+  - {fileID: 8300000, guid: 9ab7cd14aa57c9b44abce75f0e156986, type: 3}
+  - {fileID: 8300000, guid: 7c57a403c42e2e54ba3d8eec161e703c, type: 3}
+  - {fileID: 8300000, guid: 5bf3872032570f34fa1ab326acca55e2, type: 3}
+  - {fileID: 8300000, guid: 58570cf1a19e2ef45ba524894578b732, type: 3}
+  - {fileID: 8300000, guid: 4189822f20fac444799fba135bebdb6e, type: 3}
+  footstepInterval: 0.3
 --- !u!114 &4994939912940806072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,10 +187,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03009fca6a49bc3449f27b237f4c0019, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveStep: 44.05
-  stepCount: 0
-  roadSection: {fileID: 2516967707051422340, guid: 36dcd6d73760b00458106668ebc17776,
-    type: 3}
 --- !u!114 &7268576585456289313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,6 +202,7 @@ MonoBehaviour:
   myMaterials:
   - {fileID: 2100000, guid: 55bbd8a0c6a0e174799523affedc526a, type: 2}
   - {fileID: 2100000, guid: 0aa8422841324c74182b5425fe635cdf, type: 2}
+  - {fileID: 2100000, guid: f730910bdfbce8c4996308a87c3c0754, type: 2}
   maxValue: 0.01
   minValue: -0.01
   lerpTime: 5
@@ -204,10 +216,10 @@ CharacterController:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 119
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 384
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -218,8 +230,162 @@ CharacterController:
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_MinMoveDistance: 0
+  m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &4782392139133994658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259683591320761434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 2337907116
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 5298227573098259717}
+  - {fileID: 4994939912940806072}
+  - {fileID: 7268576585456289313}
+  - {fileID: 6278881395600088950}
+  - {fileID: 9119981866037542670}
+  ForceRemoteRenderTimeframe: 0
+--- !u!114 &6278881395600088950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259683591320761434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
+--- !u!114 &9119981866037542670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259683591320761434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 3147146621833960169}
+  ApplyTiming: 2
+  SyncSettings: 79
+  StateHashes: 00000000f570ecd18dcee4b041a02f7dafc2e708
+  TriggerHashes: 000000000d286c40
+  TotalWords: 1
+--- !u!82 &-6373016000988029028
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259683591320761434}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2268531216883433815
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,7 +397,7 @@ GameObject:
   - component: {fileID: 9017691618988965428}
   - component: {fileID: 3417627218442553114}
   - component: {fileID: 3147146621833960169}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -294,12 +460,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1427756050, guid: cd70731002cd5b548a6099aadbfe223c, type: 3}
+  m_Sprite: {fileID: 2066530266, guid: 74db313e4030b9c4c993ea5c9c55cd08, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 35.08, y: 49.61591}
+  m_Size: {x: 6, y: 6}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -335,7 +501,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2398633015515101792}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}

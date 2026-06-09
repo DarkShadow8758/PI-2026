@@ -6,6 +6,6 @@ public class Collectable_SpeedUp : Collectable
 {
     public override void ApllyEffect (PlayerController target)
     {
-        target.spd*=2;
+        target.Rpc_ApplySpeedBoost(2f);
     }
 }

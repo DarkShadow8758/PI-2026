@@ -1,17 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    [SerializeField] private float smoothTime = 0.3f;
     [SerializeField] private Vector3 offset;
     [SerializeField] private float rotationX = 0f; 
     [SerializeField] private float rotationY = 0f; 
     [SerializeField] private float rotationSpeed = 5f;
+
+    [Header("Fusion Settings")]
+    [Tooltip("Coloque 0 para câmera travada no jogador, ou 10 para um leve atraso visual")]
+    [SerializeField] private float cameraLag = 10f; 
     
-    private Vector3 velocity = Vector3.zero;
     private Quaternion targetRotation;
     
     void Start()
@@ -19,16 +19,30 @@ public class CameraFollow : MonoBehaviour
         targetRotation = Quaternion.Euler(rotationX, rotationY, 0);
     }
 
-    void Update()
+    // REMOVEMOS O LateUpdate! 
+    // O Fusion vai chamar essa função na hora perfeita.
+    public void UpdateCameraNetwork()
     {
-        if (target != null)
+        if(target == null) return;
+
+        Vector3 targetPos = target.position + offset;
+
+        // Trocamos o SmoothDamp problemático por Lerp ou travamento direto
+        if (cameraLag > 0)
         {
-            Vector3 targetPos = target.position + offset;
-
-            transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, smoothTime);
-
-            targetRotation = Quaternion.Euler(rotationX, rotationY, 0);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * cameraLag);
         }
+        else
+        {
+            transform.position = targetPos; // Câmera 100% travada e perfeitamente lisa
+        }
+
+        targetRotation = Quaternion.Euler(rotationX, rotationY, 0);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
     }
 }

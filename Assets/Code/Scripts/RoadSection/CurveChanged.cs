@@ -1,13 +1,14 @@
+using Fusion;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CurveChanged : MonoBehaviour
+public class CurveChanged : NetworkBehaviour
 {
     public Material[] myMaterials;
     
     private float currentValue;
-    private float targetValue;
+    [Networked]
+    private float targetValue {get; set;}
     [SerializeField] private float maxValue = .005f, minValue = -.005f;
     public float lerpTime;
     private bool isComplete = true;
@@ -21,10 +22,14 @@ public class CurveChanged : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (!HasStateAuthority)
+            return;
+
         if (other.gameObject.CompareTag("Curve"))
         {
             if (isComplete)
             {
+                targetValue = Random.Range(minValue, maxValue);
                 StartCoroutine(ChangeCurveStrenght());
             }
         }
@@ -32,15 +37,16 @@ public class CurveChanged : MonoBehaviour
 
     public IEnumerator ChangeCurveStrenght()
     {
+        isComplete = false;
         float elapsedTime = 0;
-        targetValue = Random.Range(minValue, maxValue);
-        Debug.Log(targetValue);
+        //targetValue = Random.Range(minValue, maxValue);
+        //Debug.Log("Curve: " + targetValue);
         while (elapsedTime < lerpTime)
         {
-            isComplete = false;
+            //isComplete = false;
 
             currentValue = Mathf.Lerp(currentValue, targetValue, elapsedTime / lerpTime);
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Runner.DeltaTime;
  
             foreach (Material material in myMaterials)
             {
@@ -49,8 +55,8 @@ public class CurveChanged : MonoBehaviour
 
             yield return null;
         }
-
-        isComplete = true;
+        
         currentValue = targetValue;
+        isComplete = true;   
     }
 }

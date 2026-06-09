@@ -145,7 +145,7 @@ Window → Package Manager
 * Artur Salvador Moro – Sound Designer
 * Nikolas Bendinelli Vison – Modelador 3D
 * Guilherme Castanho Jochi – Diretor de Arte
-* Jair Rodrigues de Paula Junior – Programador Auxiliar
+* Jair Rodrigues de Paula Junior – Documentação Auxiliar
 
 ---
 

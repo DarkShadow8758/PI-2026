@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Fusion;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,15 +8,10 @@ public class EnemyController : DefaultCharacter
     [Header("Targeting")]
     public string playerTag = "Player";
     public float chaseRange = 15f;
-
-    [Header("Health")]
-    public float maxHealth = 100f;
-    private float currentHealth;
-
     private NavMeshAgent agent;
     private Transform target;
 
-    [Header("Effetcs")]
+    [Header("Effects")]
     [SerializeField] private GameObject FloatingTextPrefab;
     [SerializeField] private Transform textPoint;
 
@@ -25,35 +19,48 @@ public class EnemyController : DefaultCharacter
     [SerializeField] private float damage = 10f;
     [SerializeField] private float attackCooldown = 1f;
 
-    private bool canAttack = true;
-
     [Header("Drop")]
     [SerializeField] private DropManager dropManager;
     [SerializeField] private Transform dropPoint;
 
-    EnemySpawner spawner;
+    private EnemySpawner spawner;
+
+    [Networked] private TickTimer attackCooldownTimer { get; set; }
+    [Networked] private TickTimer targetUpdateTimer { get; set; }
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         Rigidbody rb = GetComponent<Rigidbody>();
-        if(rb != null)
+        if (rb != null)
         {
             rb.isKinematic = true;
         }
         if (agent == null)
         {
             Debug.LogError("HostileAI precisa de um NavMeshAgent no mesmo GameObject.");
-        }
-        currentHealth = maxHealth;
-        target = GameObject
-        .FindGameObjectWithTag(playerTag)
-        ?.transform;
+        }    
     }
 
-    private void Update()
+    public override void Spawned()
     {
-        UpdateTarget();
+        base.Spawned();
+        if (agent != null)
+        {
+            agent.Warp(transform.position);
+        }
+    }
+
+    public override void FixedUpdateNetwork()
+    {
+        if (!HasStateAuthority) return;
+
+        if (targetUpdateTimer.ExpiredOrNotRunning(Runner))
+        {
+            UpdateTarget();
+            targetUpdateTimer = TickTimer.CreateFromSeconds(Runner, 0.5f);
+        }
+
         if (target != null && Vector3.Distance(transform.position, target.position) <= chaseRange)
         {
             agent.SetDestination(target.position);
@@ -62,7 +69,6 @@ public class EnemyController : DefaultCharacter
 
     private void UpdateTarget()
     {
-        //Find nearest player by Tag
         GameObject[] players = GameObject.FindGameObjectsWithTag(playerTag);
         if (players.Length == 0)
         {
@@ -83,76 +89,56 @@ public class EnemyController : DefaultCharacter
                 nearest = p.transform;
             }
         }
-
         target = nearest;
     }
 
     public void SetSpawner(EnemySpawner _spawner)
     {
-       spawner = _spawner;
+        spawner = _spawner;
     }
 
-    void ShowFloatingText(float value, Color textColor = default)
+    protected override void ShowDamageVisuals(float damageAmount)
     {
-        if (textColor == default) textColor = Color.white;
-        var go = Instantiate(FloatingTextPrefab, textPoint.position, Quaternion.identity, transform);
-        var tmp = go.GetComponent<TextMeshPro>();
-        tmp.text = value.ToString();
-        tmp.color = textColor;
-    }
-    private void OnTriggerStay(Collider other)
-    {
-        if(other.CompareTag("Player") && canAttack)
-        { 
-            PlayerController player =
-                other.GetComponent<PlayerController>();
-
-            if(player != null)
+        if (FloatingTextPrefab != null && textPoint != null)
+        {
+            GameObject go = Instantiate(FloatingTextPrefab, textPoint.position, Quaternion.identity);
+            
+            var tmp = go.GetComponent<TMPro.TextMeshPro>();
+            if (tmp != null)
             {
-                StartCoroutine(
-                    DamageOverTime(player)
-                );
+                tmp.text = Mathf.RoundToInt(damageAmount).ToString();
+                
+                if (damageAmount > 20f)
+                {
+                    tmp.color = Color.yellow;
+                }
             }
         }
     }
-    private IEnumerator DamageOverTime(PlayerController player)
+
+    private void OnTriggerStay(Collider other)
     {
-        canAttack = false;
+        if (!HasStateAuthority) return;
 
-        player.TakeDamage(damage);
-
-        yield return new WaitForSeconds(attackCooldown);
-
-        canAttack = true;
-    }
-
-    public void TakeDamage(float amount, bool isCritical = false)
-    {
-        currentHealth -= amount;
-
-        if (FloatingTextPrefab)
+        if (other.CompareTag("Player"))
         {
-            Color textColor = isCritical ? Color.red : Color.white;
-            ShowFloatingText(amount, textColor);
-        }
-        
-
-        if (currentHealth <= 0)
-        {
-            Death();
+            if (attackCooldownTimer.ExpiredOrNotRunning(Runner))
+            {
+                PlayerController player = other.GetComponent<PlayerController>();
+                if (player != null)
+                {
+                    player.Rpc_TakeDamage(damage);
+                    attackCooldownTimer = TickTimer.CreateFromSeconds(Runner, attackCooldown);
+                }
+            }
         }
     }
 
-    private void Death()
+    protected override void Death()
     {
-        if(dropManager != null)
-        {
-            dropManager.TryDrop(dropPoint.position);
-        }
-        if (spawner != null) spawner.currentEnemy.Remove(this.gameObject);
-        Destroy(gameObject);
-    }
+        if (dropManager != null) dropManager.TryDrop(dropPoint.position, Runner);
+        if (spawner != null) spawner.Rpc_ReportEnemyDeath();
 
-    
+        Runner.Despawn(Object);
+    }
 }
-

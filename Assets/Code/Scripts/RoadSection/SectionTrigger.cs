@@ -1,57 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
-public class SectionTrigger : MonoBehaviour
+public class SectionTrigger : NetworkBehaviour
 {
-    public float moveStep;
-    public float stepCount = 0;
-    public GameObject roadSection;
-    private List<GameObject> sections = new();
-
-    private bool spawned = false;
-
-   
-
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Trigger"))// || spawned)
-            return;
+        // Garante que só o seu personagem local avise o LevelManager (evita envios duplos)
+        if (!HasStateAuthority) return;
 
-        //spawned = true;
-
-        stepCount++;
-
-        Vector3 spawnPos = new Vector3(
-            0,
-            0,
-            moveStep * stepCount
-        );
-
-        GameObject newSection = Instantiate(
-            roadSection,
-            spawnPos,
-            Quaternion.identity
-        );
-
-        sections.Add(newSection);
-
-        if (sections.Count > 4)
+        if (other.CompareTag("Trigger"))
         {
-            GameObject oldest = sections[0];
+            // Pega a posição exata (Z) deste trigger
+            float triggerPositionZ = other.transform.position.z;
 
-            sections.RemoveAt(0);
+            // Desliga o trigger apenas na sua tela para não bater nele duas vezes no mesmo frame
+            other.enabled = false;
 
-            Destroy(oldest);
-        }
-        other.enabled = false;
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if(other.CompareTag("Trigger"))
-        {
-            //spawned = false;
+            // Envia um pedido ao Gerenciador de Nível para spawnar a próxima pista
+            if (LevelManager.Instance != null)
+            {
+                LevelManager.Instance.Rpc_RequestNextSection(triggerPositionZ);
+            }
+            else
+            {
+                Debug.LogWarning("LevelManager não encontrado na cena!");
+            }
         }
     }
 }
